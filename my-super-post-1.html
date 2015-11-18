@@ -174,25 +174,5 @@ My Blog            </a>
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
 <script src="/theme/js/respond.min.js"></script>
 
-<script type="text/javascript" src="https://wifi.weixin.qq.com/resources/js/wechatticket/wechatutil.js"></script>
-<script src="http://www.veryhuo.com/uploads/Common/js/jQuery.md5.js"></script>
-<script>
-var appId = "wx25dd50784edd9977";
-var extend = "";
-var timestamp = Date.parse(new Date());
-var shopId = "7774371";
-var secretKey = "5f636d6df3fa5918eff208a579dd9072";
-var authUrl = "http://baidu.com";
-var mac = "";
-var ssid = "Wiwide-Office";
-var bssid = "";
-
-var sign = $.md5(appId + timestamp + shopId + authUrl + mac + ssid + bssid + secretKey);
-console.log(sign);
-
-Wechat_GotoRedirect(appId, extend, timestamp, sign, shopId, authUrl, mac, ssid, bssid); 
-
-</script>
-
 </body>
 </html>
