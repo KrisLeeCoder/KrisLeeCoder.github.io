@@ -186,6 +186,7 @@ var ssid = "";
 var bssid = "";
 
 var sign = $.md5(appId + timestamp + shopId + authUrl + mac + ssid + bssid + secretKey);
+console.log(sign);
 
 Wechat_GotoRedirect(appId, extend, timestamp, sign, shop_id, authUrl, mac, ssid, bssid); 
 
