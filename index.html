@@ -7,8 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="/theme/js/md5.js"></script>
-    <script type="text/javascript" src="https://wifi.weixin.qq.com/resources/js/wechatticket/wechatutil.js" ></script>
 
 
 
@@ -150,25 +148,6 @@ My Blog            </a>
 <!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
 <script src="/theme/js/respond.min.js"></script>
 
-<script type="text/javascript">
-	function connectWiFi() {
-		var SSID = "D-GuiYang",
-			shopId = "7705299",
-			appId = "wx5bcfef6f3047511b",
-			secretKey = "99cab92c1562b113626eecb7232651c5";
-
-		var extend = "",
-			mac = "00:00:00:01:00:1F",
-			bssid = "",
-			authUrl = "http://asp.wiwide.com/apps/airporthome/wx/callback?airport_code=KWE";
-
-		var timestamp = String(new Date().getTime());
-
-		var sign = hex_md5(appId + extend + timestamp + shopId + authUrl + mac + SSID + bssid + secretKey);
-
-		Wechat_GotoRedirect(appId, extend, timestamp, sign, shopId, authUrl, mac, SSID, bssid);
-	}
-</script>
 
 </body>
 </html>
