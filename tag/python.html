@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/font-awesome.min.css">
+
+
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+    <meta name="author" content="Kris Lee" />
+    <meta name="description" content="" />
+<meta property="og:site_name" content="Untitled Blog"/>
+<meta property="og:type" content="blog"/>
+<meta property="og:title" content="Untitled Blog"/>
+<meta property="og:description" content=""/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.doubis.com"/>
+<meta property="og:image" content="http://blog.doubis.com/images/head.jpg">
+
+  <title>Untitled Blog &ndash; Tag: python</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://blog.doubis.com">
+        <img src="http://blog.doubis.com/images/head.jpg" alt="Untitled Blog" title="Untitled Blog">
+      </a>
+      <h1><a href="http://blog.doubis.com">Untitled Blog</a></h1>
+      <p>an untitled web developer</p>
+      <nav>
+        <ul class="list">
+          <li><a href="http://hynal.com" target="_blank">Under 7℃</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/KrisLeeCoder/" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/kris.lee.sh" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h2><a href="http://blog.doubis.com/django-tips.html#django-tips">Django开发中的优化小技巧</a></h2>
+    <p>
+      Posted on dom 28 febrero 2016 in <a href="http://blog.doubis.com/category/django.html">Django</a>
+      &#8226; Tagged with
+      <a href="http://blog.doubis.com/tag/django.html">Django</a>,      <a href="http://blog.doubis.com/tag/python.html">python</a>    </p>
+  </header>
+  <div>
+      <h2>1. django_session表太大</h2>
+<p>网站发布一段时间后发现数据库中的django_session表越来越大, 可以使用以下命令删除过期的session</p>
+<div class="highlight"><pre><span></span>python manage.py clearsessions 
+</pre></div>
+
+
+<p>Django 官方推荐将上述命令加入crontab中定期自动清理过期session.</p>
+<h2>2. 适当使用QuerySets</h2>
+<p>QuerySets是有缓存的，一旦取出来，它就会在内存里呆上一段时间，尽量重用它。举个简单的例子：</p>
+<p>了解缓存属性：</p>
+<div class="highlight"><pre><span></span><span class="n">entry</span> <span class="o">=</span> <span class="n">Entry ...</span></pre></div>
+      <a class="btn" href="http://blog.doubis.com/django-tips.html#django-tips">Continue reading</a>
+  </div>
+  <hr />
+</article>
+<article>
+  <header>
+    <h2><a href="http://blog.doubis.com/ubuntu-NUDM.html#ubuntu-NUDM">Ubuntu搭建 nginx + UWSGI + Django + MySQL web服务器</a></h2>
+    <p>
+      Posted on dom 03 enero 2016 in <a href="http://blog.doubis.com/category/python.html">Python</a>
+      &#8226; Tagged with
+      <a href="http://blog.doubis.com/tag/python.html">python</a>,      <a href="http://blog.doubis.com/tag/environment.html">environment</a>    </p>
+  </header>
+  <div>
+      <p>这里我们假设用户为prod, 服务器文件目录如下:<br />
+--- deploys  用于源码部署<br />
+--- softwares  软件安装目录<br />
+--- installs  软件安装包存放目录<br />
+--- venv  python虚拟环境<br />
+--- tmp  临时文件存储目录</p>
+<h1>1. nginx</h1>
+<h2>依赖库安装</h2>
+<table>
+<thead>
+<tr>
+<th>库</th>
+<th align="left">官网</th>
+<th align="left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pcre</td>
+<td align="left">http ...</td></tr></tbody></table>
+      <a class="btn" href="http://blog.doubis.com/ubuntu-NUDM.html#ubuntu-NUDM">Continue reading</a>
+  </div>
+</article>
+
+  <div class="pagination">
+  </div>
+
+    <footer>
+        <p>&copy; Kris Lee 2016</p>
+<p>Built using <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a></p>    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Untitled Blog ",
+  "url" : "http://blog.doubis.com",
+  "image": "http://blog.doubis.com/images/head.jpg",
+  "description": ""
+}
+</script></body>
+</html>

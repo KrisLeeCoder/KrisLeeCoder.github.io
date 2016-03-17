@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/font-awesome.min.css">
+
+
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="Kris Lee" />
+<meta name="description" content="在不同版本间，选项可能会有些许变化，请总是使用 ./configure –help 命令来检查 参数 说明 –sbin-path= Nginx可执行文件安装路径只能安装时指定，如果没有指定，默认为/sbin/nginx –conf-path= 在没有给定-c选项下默认的nginx.conf的路径如果没有指定，默认为/conf/nginx ..." />
+<meta name="keywords" content="nginx">
+<meta property="og:site_name" content="Untitled Blog"/>
+<meta property="og:title" content="nginx configure 各项参数中文说明"/>
+<meta property="og:description" content="在不同版本间，选项可能会有些许变化，请总是使用 ./configure –help 命令来检查 参数 说明 –sbin-path= Nginx可执行文件安装路径只能安装时指定，如果没有指定，默认为/sbin/nginx –conf-path= 在没有给定-c选项下默认的nginx.conf的路径如果没有指定，默认为/conf/nginx ..."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.doubis.com/nginx-configure.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-12-21 19:40:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://blog.doubis.com/author/kris-lee.html">
+<meta property="article:section" content="environment"/>
+<meta property="article:tag" content="nginx"/>
+<meta property="og:image" content="http://blog.doubis.com/images/head.jpg">
+  <title>Untitled Blog &ndash; nginx configure 各项参数中文说明</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://blog.doubis.com">
+        <img src="http://blog.doubis.com/images/head.jpg" alt="Untitled Blog" title="Untitled Blog">
+      </a>
+      <h1><a href="http://blog.doubis.com">Untitled Blog</a></h1>
+      <p>an untitled web developer</p>
+      <nav>
+        <ul class="list">
+          <li><a href="http://hynal.com" target="_blank">Under 7℃</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/KrisLeeCoder/" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/kris.lee.sh" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="nginx-configure">nginx configure 各项参数中文说明</h1>
+    <p>Posted on lun 21 diciembre 2015 in <a href="http://blog.doubis.com/category/environment.html">environment</a></p>
+  </header>
+  <div>
+    <p>在不同版本间，选项可能会有些许变化，请总是使用 ./configure –help 命令来检查</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>–sbin-path=<path></td>
+<td>Nginx可执行文件安装路径只能安装时指定，如果没有指定，默认为<prefix>/sbin/nginx</td>
+</tr>
+<tr>
+<td>–conf-path=<path></td>
+<td>在没有给定-c选项下默认的nginx.conf的路径如果没有指定，默认为<prefix>/conf/nginx.conf</td>
+</tr>
+<tr>
+<td>–pid-path=<path></td>
+<td>在nginx.conf中没有指定pid指令的情况下，默认的nginx.pid的路径如果没有指定，默认为 <prefix>/logs/nginx.pid</td>
+</tr>
+<tr>
+<td>–lock-path=<path></td>
+<td>nginx.lock文件的路径</td>
+</tr>
+<tr>
+<td>–error-log-path=<path></td>
+<td>在nginx.conf中没有指定error_log指令的情况下，默认的错误日志的路径如果没有指定，默认为 <prefix>/logs/error.log</td>
+</tr>
+<tr>
+<td>–http-log-path=<path></td>
+<td>在nginx.conf中没有指定access_log指令的情况下，默认的访问日志的路径如果没有指定，默认为 <prefix>/logs/access.log</td>
+</tr>
+<tr>
+<td>–user=<user></td>
+<td>在nginx.conf中没有指定user指令的情况下，默认的nginx使用的用户如果没有指定，默认为 nobody</td>
+</tr>
+<tr>
+<td>–group=<group></td>
+<td>在nginx.conf中没有指定user指令的情况下，默认的nginx使用的组如果没有指定，默认为 nobody</td>
+</tr>
+<tr>
+<td>–builddir=DIR</td>
+<td>指定编译的目录</td>
+</tr>
+<tr>
+<td>–with-rtsig_module</td>
+<td>启用 rtsig 模块</td>
+</tr>
+<tr>
+<td>–with-select_module –without-select_module</td>
+<td>允许或不允许开启SELECT模式，如果 configure 没有找到更合适的模式，比如：kqueue(sun os),epoll (linux kenel 2.6+), rtsig(实时信号)或者/dev/poll(一种类似select的模式，底层实现与SELECT基本相 同，都是采用轮训方法) SELECT模式将是默认安装模式</td>
+</tr>
+<tr>
+<td>–with-poll_module –without-poll_module</td>
+<td>Whether or not to enable the poll module. This module is enabled by default if a more suitable method such as kqueue, epoll, rtsig or /dev/poll is not discovered by configure.</td>
+</tr>
+<tr>
+<td>–with-http_ssl_module</td>
+<td>开启HTTP SSL模块，使NGINX可以支持HTTPS请求这个模块需要已经安装了OPENSSL，在DEBIAN上是libssl</td>
+</tr>
+<tr>
+<td>–with-http_realip_module</td>
+<td>启用 ngx_http_realip_module</td>
+</tr>
+<tr>
+<td>–with-http_addition_module</td>
+<td>启用 ngx_http_addition_module</td>
+</tr>
+<tr>
+<td>–with-http_sub_module</td>
+<td>启用 ngx_http_sub_module</td>
+</tr>
+<tr>
+<td>–with-http_dav_module</td>
+<td>启用 ngx_http_dav_module</td>
+</tr>
+<tr>
+<td>–with-http_flv_module</td>
+<td>启用 ngx_http_flv_module</td>
+</tr>
+<tr>
+<td>–with-http_stub_status_module</td>
+<td>启用 “server status” 页</td>
+</tr>
+<tr>
+<td>–without-http_charset_module</td>
+<td>禁用 ngx_http_charset_module</td>
+</tr>
+<tr>
+<td>–without-http_gzip_module</td>
+<td>禁用 ngx_http_gzip_module. 如果启用，需要 zlib</td>
+</tr>
+<tr>
+<td>–without-http_ssi_module</td>
+<td>禁用 ngx_http_ssi_module</td>
+</tr>
+<tr>
+<td>–without-http_userid_module</td>
+<td>禁用 ngx_http_userid_module</td>
+</tr>
+<tr>
+<td>–without-http_access_module</td>
+<td>禁用 ngx_http_access_module</td>
+</tr>
+<tr>
+<td>–without-http_auth_basic_module</td>
+<td>禁用 ngx_http_auth_basic_module</td>
+</tr>
+<tr>
+<td>–without-http_autoindex_module</td>
+<td>禁用 ngx_http_autoindex_module</td>
+</tr>
+<tr>
+<td>–without-http_geo_module</td>
+<td>禁用 ngx_http_geo_module</td>
+</tr>
+<tr>
+<td>–without-http_map_module</td>
+<td>禁用 ngx_http_map_module</td>
+</tr>
+<tr>
+<td>–without-http_referer_module</td>
+<td>禁用 ngx_http_referer_module</td>
+</tr>
+<tr>
+<td>–without-http_rewrite_module</td>
+<td>禁用 ngx_http_rewrite_module. 如果启用需要 PCRE</td>
+</tr>
+<tr>
+<td>–without-http_proxy_module</td>
+<td>禁用 ngx_http_proxy_module</td>
+</tr>
+<tr>
+<td>–without-http_fastcgi_module</td>
+<td>禁用 ngx_http_fastcgi_module</td>
+</tr>
+<tr>
+<td>–without-http_memcached_module</td>
+<td>禁用 ngx_http_memcached_module</td>
+</tr>
+<tr>
+<td>–without-http_limit_zone_module</td>
+<td>禁用 ngx_http_limit_zone_module</td>
+</tr>
+<tr>
+<td>–without-http_empty_gif_module</td>
+<td>禁用 ngx_http_empty_gif_module</td>
+</tr>
+<tr>
+<td>–without-http_browser_module</td>
+<td>禁用 ngx_http_browser_module</td>
+</tr>
+<tr>
+<td>–without-http_upstream_ip_hash_module</td>
+<td>禁用 ngx_http_upstream_ip_hash_module</td>
+</tr>
+<tr>
+<td>–with-http_perl_module</td>
+<td>启用 ngx_http_perl_module</td>
+</tr>
+<tr>
+<td>–with-perl_modules_path=PATH</td>
+<td>指定 perl 模块的路径</td>
+</tr>
+<tr>
+<td>–with-perl=PATH</td>
+<td>指定 perl 执行文件的路径</td>
+</tr>
+<tr>
+<td>–http-log-path=PATH</td>
+<td>指定access log 文件的路径</td>
+</tr>
+<tr>
+<td>–http-client-body-temp-path=PATH</td>
+<td>指定http客户端请求缓存文件存放的目录</td>
+</tr>
+<tr>
+<td>–http-proxy-temp-path=PATH</td>
+<td>指定http反向代理缓存文件存放的目录</td>
+</tr>
+<tr>
+<td>–http-fastcgi-temp-path=PATH</td>
+<td>指定http fastCGI缓存文件存放的目录</td>
+</tr>
+<tr>
+<td>–without-http</td>
+<td>禁用 HTTP server</td>
+</tr>
+<tr>
+<td>–with-mail</td>
+<td>启用 IMAP4/POP3/SMTP 代理模块</td>
+</tr>
+<tr>
+<td>–with-mail_ssl_module</td>
+<td>启用 ngx_mail_ssl_module</td>
+</tr>
+<tr>
+<td>–with-cc=PATH</td>
+<td>指定 C 编译器的路径</td>
+</tr>
+<tr>
+<td>–with-cpp=PATH</td>
+<td>指定 C 预处理器的路径</td>
+</tr>
+<tr>
+<td>–with-cc-opt=OPTIONS</td>
+<td>Additional parameters which will be added to the variable CFLAGS. With the use of the system library PCRE in FreeBSD, it is necessary to indicate –with-cc-opt=”-I /usr/local/include”. If we are using select() and it is necessary to increase the number of file descriptors, then this also can be assigned here: –with-cc-opt=”-D FD_SETSIZE=2048″.</td>
+</tr>
+<tr>
+<td>–with-ld-opt=OPTIONS</td>
+<td>Additional parameters passed to the linker. With the use of the system library PCRE in FreeBSD, it is necessary to indicate –with-ld-opt=”-L /usr/local/lib”.</td>
+</tr>
+<tr>
+<td>–with-cpu-opt=CPU</td>
+<td>为特定的 CPU 编译，有效的值包括：pentium, pentiumpro, pentium3, pentium4, athlon, opteron, amd64, sparc32, sparc64, ppc64</td>
+</tr>
+<tr>
+<td>–without-pcre</td>
+<td>禁止 PCRE 库的使用同时也会禁止 HTTP rewrite 模块在 “location” 配置指令中的正则表达式也需要 PCRE</td>
+</tr>
+<tr>
+<td>–with-pcre=DIR</td>
+<td>指定 PCRE 库的源代码的路径</td>
+</tr>
+<tr>
+<td>–with-pcre-opt=OPTIONS</td>
+<td>设置pcre库的源代码路径</td>
+</tr>
+<tr>
+<td>–with-md5=DIR</td>
+<td>设置MD5库的源代码 路径</td>
+</tr>
+<tr>
+<td>–with-md5-opt=OPTIONS</td>
+<td>MD5库的额外编译选项</td>
+</tr>
+<tr>
+<td>–with-md5-asm</td>
+<td>MD5汇编源码</td>
+</tr>
+<tr>
+<td>–with-sha1=DIR</td>
+<td>sha1库的 源代码 路径</td>
+</tr>
+<tr>
+<td>–with-sha1-opt=OPTIONS</td>
+<td>sha1库的 额外编译选项</td>
+</tr>
+<tr>
+<td>–with-sha1-asm</td>
+<td>使用sha1 汇编源码</td>
+</tr>
+<tr>
+<td>–with-zlib=DIR</td>
+<td>zlib库的源代码路径</td>
+</tr>
+<tr>
+<td>–with-zlib-opt=OPTIONS</td>
+<td>zlib库的编译选项</td>
+</tr>
+<tr>
+<td>–with-zlib-asm=CPU</td>
+<td>zlib库针对CPU优化,值有: pentium, pentiumpro</td>
+</tr>
+<tr>
+<td>–prefix=<path></td>
+<td>Nginx安装路径如果没有指定，默认为 /usr/local/nginx</td>
+</tr>
+<tr>
+<td>–with-openssl=DIR</td>
+<td>openssl库的源代码路径</td>
+</tr>
+<tr>
+<td>–with-openssl-opt=OPTIONS</td>
+<td>openssl编译选项</td>
+</tr>
+<tr>
+<td>–with-debug</td>
+<td>启用调试日志</td>
+</tr>
+<tr>
+<td>–add-module=PATH</td>
+<td>增加第三方模块所在的路径</td>
+</tr>
+</tbody>
+</table>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://blog.doubis.com/tag/nginx.html">nginx</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; Kris Lee 2016</p>
+<p>Built using <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a></p>    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "nginx configure 各项参数中文说明",
+  "headline": "nginx configure 各项参数中文说明",
+  "datePublished": "2015-12-21 19:40:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "Kris Lee",
+    "url": "http://blog.doubis.com/author/kris-lee.html"
+  },
+  "image": "http://blog.doubis.com/images/head.jpg",
+  "url": "http://blog.doubis.com/nginx-configure.html",
+  "description": "在不同版本间，选项可能会有些许变化，请总是使用 ./configure –help 命令来检查 参数 说明 –sbin-path= Nginx可执行文件安装路径只能安装时指定，如果没有指定，默认为/sbin/nginx –conf-path= 在没有给定-c选项下默认的nginx.conf的路径如果没有指定，默认为/conf/nginx ..."
+}
+</script></body>
+</html>

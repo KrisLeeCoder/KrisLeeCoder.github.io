@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/font-awesome.min.css">
+
+
+
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="Kris Lee" />
+<meta name="description" content="1. django_session表太大 网站发布一段时间后发现数据库中的django_session表越来越大, 可以使用以下命令删除过期的session python manage.py clearsessions Django 官方推荐将上述命令加入crontab中定期自动清理过期session. 2. 适当使用QuerySets QuerySets是有缓存的，一旦取出来，它就会在内存里呆上一段时间，尽量重用它。举个简单的例子： 了解缓存属性： entry = Entry ..." />
+<meta name="keywords" content="Django, python">
+<meta property="og:site_name" content="Untitled Blog"/>
+<meta property="og:title" content="Django开发中的优化小技巧"/>
+<meta property="og:description" content="1. django_session表太大 网站发布一段时间后发现数据库中的django_session表越来越大, 可以使用以下命令删除过期的session python manage.py clearsessions Django 官方推荐将上述命令加入crontab中定期自动清理过期session. 2. 适当使用QuerySets QuerySets是有缓存的，一旦取出来，它就会在内存里呆上一段时间，尽量重用它。举个简单的例子： 了解缓存属性： entry = Entry ..."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.doubis.com/django-tips.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-02-28 20:43:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://blog.doubis.com/author/kris-lee.html">
+<meta property="article:section" content="Django"/>
+<meta property="article:tag" content="Django"/>
+<meta property="article:tag" content="python"/>
+<meta property="og:image" content="http://blog.doubis.com/images/head.jpg">
+  <title>Untitled Blog &ndash; Django开发中的优化小技巧</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://blog.doubis.com">
+        <img src="http://blog.doubis.com/images/head.jpg" alt="Untitled Blog" title="Untitled Blog">
+      </a>
+      <h1><a href="http://blog.doubis.com">Untitled Blog</a></h1>
+      <p>an untitled web developer</p>
+      <nav>
+        <ul class="list">
+          <li><a href="http://hynal.com" target="_blank">Under 7℃</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/KrisLeeCoder/" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/kris.lee.sh" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="django-tips">Django开发中的优化小技巧</h1>
+    <p>Posted on dom 28 febrero 2016 in <a href="http://blog.doubis.com/category/django.html">Django</a></p>
+  </header>
+  <div>
+    <h2>1. django_session表太大</h2>
+<p>网站发布一段时间后发现数据库中的django_session表越来越大, 可以使用以下命令删除过期的session</p>
+<div class="highlight"><pre><span></span>python manage.py clearsessions 
+</pre></div>
+
+
+<p>Django 官方推荐将上述命令加入crontab中定期自动清理过期session.</p>
+<h2>2. 适当使用QuerySets</h2>
+<p>QuerySets是有缓存的，一旦取出来，它就会在内存里呆上一段时间，尽量重用它。举个简单的例子：</p>
+<p>了解缓存属性：</p>
+<div class="highlight"><pre><span></span><span class="n">entry</span> <span class="o">=</span> <span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">entry</span><span class="o">.</span><span class="n">blog</span>   <span class="c1"># 博客实体第一次取出，是要访问数据库的</span>
+<span class="n">entry</span><span class="o">.</span><span class="n">blog</span>   <span class="c1"># 第二次再用，那它就是缓存里的实体了，不再访问数据库</span>
+</pre></div>
+
+
+<p>但下面的例子就不一样:</p>
+<div class="highlight"><pre><span></span><span class="n">entry</span> <span class="o">=</span> <span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">entry</span><span class="o">.</span><span class="n">authors</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>   <span class="c1"># 第一次all函数会查询数据库</span>
+<span class="n">entry</span><span class="o">.</span><span class="n">authors</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>   <span class="c1"># 第二次all函数还会查询数据库</span>
+</pre></div>
+
+
+<p>all，count exists是调用函数（需要连接数据库处理结果的），注意在模板template里的代码，模板里不允许括号，但如果使用此类的调用函数，一样会去连接数据库的，能用缓存的数据就别连接到数据库去处理结果。还要注意的是，自定义的实体属性，如果调用函数的，记得自己加上缓存策略。</p>
+<p>模板中多次使用的变量，要用with标签，把它看成变量的缓存行为吧。</p>
+<p>使用QuerySets的iterator()：
+通常QuerySets先调用iterator再缓存起来，当获取大量的实体列表而仅使用一次时，缓存行为会耗费宝贵的内存，这时iterator()能帮到你，iterator()只调用iterator而省去了缓存步骤，显著减少内存占用率，具体参考相关文档。</p>
+<h2>3. 数据库的工作就交给数据库本身计算，别用Python处理：</h2>
+<p>使用 filter and exclude 过滤不需要的记录，这两个是最常用语句，相当是SQL的where。<br />
+同一实体里使用F()表达式过滤其他字段。<br />
+使用annotate对数据库做聚合运算。</p>
+<p>不要用python语言对以上类型数据过滤筛选，同样的结果，python处理复杂度要高，而且效率不高， 白白浪费内存。</p>
+<p>使用QuerySet.extra()：
+extra虽然扩展性不太好，但功能很强大，如果实体里需要需要增加额外属性，不得已时，通过extra来实现，也是个好办法。</p>
+<p>使用原生的SQL语句：
+如果发现Django的ORM已经实现不了你的需求，而extra也无济于事的时候，那就用原生SQL语句吧，用Djangoango.db.connection.queries去实现你需要的东西。</p>
+<h2>4. 如果需要就一次性取出你所需要的数据：</h2>
+<p>单一动作（如：同一个页面）需要多次连接数据库时，最好一次性取出所有需要的数据，减少连接数据库次数。此类需求推荐使用QuerySet.select_related() 和 prefetch_related()。</p>
+<p>相反，别取出你不需要的东西，模版templates里往往只需要实体的某几个字段而不是全部，这时QuerySet.values() 和 values_list()，对你有用，它们只取你需要的字段，返回字典dict和列表list类型的东西，在模版里够用即可，这可减少内存损耗，提高性能。</p>
+<p>同样QuerySet.defer()和only()对提高性能也有很大的帮助，一个实体里可能有不少的字段，有些字段包含很多元数据，比如博客的正文，很多字符组成，Django获取实体时（取出实体过程中会进行一些python类型转换工作），我们可以延迟大量元数据字段的处理，只处理需要的关键字段，这时QuerySet.defer()就派上用场了，在函数里传入需要延时处理的字段即可；而only()和defer()是相反功能。</p>
+<p>使用QuerySet.count()代替len(queryset),虽然这两个处理得出的结果是一样的，但前者性能优秀很多。同理判断记录存在时，QuerySet.exists()比if queryset实在强得太多了。</p>
+<p>当然一样的结果，在缓存里已经存在，就别滥用count()，exists()，all()函数了。</p>
+<h2>5. 懂减少数据库的连接数：</h2>
+<p>使用 QuerySet.update() 和 delete()，这两个函数是能批处理多条记录的，适当使用它们事半功倍；如果可以，别一条条数据去update delete处理。</p>
+<p>对于一次性取出来的关联记录，获取外键的时候，直接取关联表的属性，而不是取关联属性，如：
+entry.blog.id<br />
+优于<br />
+entry.blog_id</p>
+<p>善于使用批量插入记录，如：</p>
+<div class="highlight"><pre><span></span><span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">([</span>
+    <span class="n">Entry</span><span class="p">(</span><span class="n">headline</span><span class="o">=</span><span class="s2">&quot;Python 3.0 Released&quot;</span><span class="p">),</span>
+    <span class="n">Entry</span><span class="p">(</span><span class="n">headline</span><span class="o">=</span><span class="s2">&quot;Python 3.1 Planned&quot;</span><span class="p">)</span>
+<span class="p">])</span>
+</pre></div>
+
+
+<p>优于  </p>
+<div class="highlight"><pre><span></span><span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">headline</span><span class="o">=</span><span class="s2">&quot;Python 3.0 Released&quot;</span><span class="p">)</span>
+<span class="n">Entry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">headline</span><span class="o">=</span><span class="s2">&quot;Python 3.1 Planned&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>前者只连接一次数据库，而后者连接两次哦。</p>
+<p>还有相似的动作需要注意的，如：多对多的关系，</p>
+<div class="highlight"><pre><span></span><span class="n">my_band</span><span class="o">.</span><span class="n">members</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">me</span><span class="p">,</span> <span class="n">my_friend</span><span class="p">)</span>
+</pre></div>
+
+
+<p>优于  </p>
+<div class="highlight"><pre><span></span><span class="n">my_band</span><span class="o">.</span><span class="n">members</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+<span class="n">my_band</span><span class="o">.</span><span class="n">members</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">my_friend</span><span class="p">)</span>
+</pre></div>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://blog.doubis.com/tag/django.html">Django</a>
+      <a href="http://blog.doubis.com/tag/python.html">python</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; Kris Lee 2016</p>
+<p>Built using <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a></p>    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "Django开发中的优化小技巧",
+  "headline": "Django开发中的优化小技巧",
+  "datePublished": "2016-02-28 20:43:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "Kris Lee",
+    "url": "http://blog.doubis.com/author/kris-lee.html"
+  },
+  "image": "http://blog.doubis.com/images/head.jpg",
+  "url": "http://blog.doubis.com/django-tips.html",
+  "description": "1. django_session表太大 网站发布一段时间后发现数据库中的django_session表越来越大, 可以使用以下命令删除过期的session python manage.py clearsessions Django 官方推荐将上述命令加入crontab中定期自动清理过期session. 2. 适当使用QuerySets QuerySets是有缓存的，一旦取出来，它就会在内存里呆上一段时间，尽量重用它。举个简单的例子： 了解缓存属性： entry = Entry ..."
+}
+</script></body>
+</html>
