@@ -28,7 +28,7 @@
 <meta property="og:url" content="http://blog.doubis.com"/>
 <meta property="og:image" content="http://blog.doubis.com/images/head.jpg">
 
-  <title>Untitled Blog &ndash; Authors</title>
+  <title>Untitled Blog &ndash; Category: SPDY</title>
 </head>
 <body>
   <aside>
@@ -53,16 +53,27 @@
 
 <article>
   <header>
-    <h1>Authors</h1>
+    <h2><a href="http://blog.doubis.com/http-2-spdy.html#http-2-spdy">HTTP1.1 与 SPDY 协议对比</a></h2>
+    <p>
+      Posted on sáb 22 agosto 2015 in <a href="http://blog.doubis.com/category/spdy.html">SPDY</a>
+      &#8226; Tagged with
+      <a href="http://blog.doubis.com/tag/http.html">http</a>,      <a href="http://blog.doubis.com/tag/spdy.html">spdy</a>    </p>
   </header>
   <div>
-    <ul class="list">
-      <li><a href="http://blog.doubis.com/author/guang-xin.html">桄欣</a> (1)</li>
-      <li><a href="http://blog.doubis.com/author/kris-lee.html">Kris Lee</a> (3)</li>
-      <li><a href="http://blog.doubis.com/author/liu-qiu-qi.html">刘秋岐</a> (1)</li>
-    </ul>
+      <p>SPDY协议的介绍参考google或者<a href="http://www.geekpark.net/topics/158198">极客公园</a>, 本文着重讲下spdy协议在哪些地方相对于http1.1做了耗时优化.</p>
+<p>首先解释下一个页面加载进来有那些地方需要耗时:</p>
+<ol>
+<li>DNS查询时间（几毫秒到几十秒不等）</li>
+<li>TCP握手时间（取决于你和服务器的ping值，三次握手需要3倍单程时间，除非你把服务器架在内网，一般几十毫秒到几秒不等）</li>
+<li>慢启动窗口时间（这是一个累积过程，刚建立的TCP连接不会以最大速度发送数据，数据传输速度会有一个线性增长的过程）</li>
+<li>请求传输时间（一般的请求都在几百字节到几KB，也就一两个TCP就能发出去）</li>
+<li>服务器处理时间 ...</li></ol>
+      <a class="btn" href="http://blog.doubis.com/http-2-spdy.html#http-2-spdy">Continue reading</a>
   </div>
 </article>
+
+  <div class="pagination">
+  </div>
 
     <footer>
         <p>&copy; Kris Lee 2016</p>
@@ -73,5 +84,14 @@
 
 
 
-</body>
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " Untitled Blog ",
+  "url" : "http://blog.doubis.com",
+  "image": "http://blog.doubis.com/images/head.jpg",
+  "description": ""
+}
+</script></body>
 </html>

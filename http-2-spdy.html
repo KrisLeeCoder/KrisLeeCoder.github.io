@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <link href='//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/style.min.css">
+
+  <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/pygments.min.css">
+  <link rel="stylesheet" type="text/css" href="http://blog.doubis.com/theme/stylesheet/font-awesome.min.css">
+
+
+
+
+    <link rel="shortcut icon" href="http://blog.doubis.com/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="http://blog.doubis.com/images/favicon.ico" type="image/x-icon">
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+<meta name="author" content="桄欣" />
+<meta name="description" content="SPDY协议的介绍参考google或者极客公园, 本文着重讲下spdy协议在哪些地方相对于http1.1做了耗时优化. 首先解释下一个页面加载进来有那些地方需要耗时: DNS查询时间（几毫秒到几十秒不等） TCP握手时间（取决于你和服务器的ping值，三次握手需要3倍单程时间，除非你把服务器架在内网，一般几十毫秒到几秒不等） 慢启动窗口时间（这是一个累积过程，刚建立的TCP连接不会以最大速度发送数据，数据传输速度会有一个线性增长的过程） 请求传输时间（一般的请求都在几百字节到几KB，也就一两个TCP就能发出去） 服务器处理时间 ..." />
+<meta name="keywords" content="http, spdy">
+<meta property="og:site_name" content="Untitled Blog"/>
+<meta property="og:title" content="HTTP1.1 与 SPDY 协议对比"/>
+<meta property="og:description" content="SPDY协议的介绍参考google或者极客公园, 本文着重讲下spdy协议在哪些地方相对于http1.1做了耗时优化. 首先解释下一个页面加载进来有那些地方需要耗时: DNS查询时间（几毫秒到几十秒不等） TCP握手时间（取决于你和服务器的ping值，三次握手需要3倍单程时间，除非你把服务器架在内网，一般几十毫秒到几秒不等） 慢启动窗口时间（这是一个累积过程，刚建立的TCP连接不会以最大速度发送数据，数据传输速度会有一个线性增长的过程） 请求传输时间（一般的请求都在几百字节到几KB，也就一两个TCP就能发出去） 服务器处理时间 ..."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.doubis.com/http-2-spdy.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-08-22 20:43:00+08:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="http://blog.doubis.com/author/guang-xin.html">
+<meta property="article:section" content="SPDY"/>
+<meta property="article:tag" content="http"/>
+<meta property="article:tag" content="spdy"/>
+<meta property="og:image" content="http://blog.doubis.com/images/head.jpg">
+  <title>Untitled Blog &ndash; HTTP1.1 与 SPDY 协议对比</title>
+</head>
+<body>
+  <aside>
+    <div>
+      <a href="http://blog.doubis.com">
+        <img src="http://blog.doubis.com/images/head.jpg" alt="Untitled Blog" title="Untitled Blog">
+      </a>
+      <h1><a href="http://blog.doubis.com">Untitled Blog</a></h1>
+      <p>an untitled web developer</p>
+      <nav>
+        <ul class="list">
+          <li><a href="http://hynal.com" target="_blank">Under 7℃</a></li>
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a class="sc-github" href="https://github.com/KrisLeeCoder/" target="_blank"><i class="fa fa-github"></i></a></li>
+        <li><a class="sc-facebook" href="https://www.facebook.com/kris.lee.sh" target="_blank"><i class="fa fa-facebook"></i></a></li>
+      </ul>
+    </div>
+  </aside>
+  <main>
+
+<article>
+  <header>
+    <h1 id="http-2-spdy">HTTP1.1 与 SPDY 协议对比</h1>
+    <p>Posted on sáb 22 agosto 2015 in <a href="http://blog.doubis.com/category/spdy.html">SPDY</a></p>
+  </header>
+  <div>
+    <p>SPDY协议的介绍参考google或者<a href="http://www.geekpark.net/topics/158198">极客公园</a>, 本文着重讲下spdy协议在哪些地方相对于http1.1做了耗时优化.</p>
+<p>首先解释下一个页面加载进来有那些地方需要耗时:</p>
+<ol>
+<li>DNS查询时间（几毫秒到几十秒不等）</li>
+<li>TCP握手时间（取决于你和服务器的ping值，三次握手需要3倍单程时间，除非你把服务器架在内网，一般几十毫秒到几秒不等）</li>
+<li>慢启动窗口时间（这是一个累积过程，刚建立的TCP连接不会以最大速度发送数据，数据传输速度会有一个线性增长的过程）</li>
+<li>请求传输时间（一般的请求都在几百字节到几KB，也就一两个TCP就能发出去）</li>
+<li>服务器处理时间（服务器根据请求读磁盘的时间，这里不讨论复杂的服务端程序，以静态资源服务为例，一般零点几毫秒搞定）</li>
+<li>响应传输时间（服务器把资源传回来的时间，取决于资源大小）</li>
+<li>浏览器处理响应时间（DOM处理，CSS解析，JS运行等，CPU绘图时间太小就不写了）</li>
+</ol>
+<p>再看看Google在Chrome浏览器里做了什么:</p>
+<ul>
+<li>针对第1点，Chrome浏览器有自己的DNS Cache系统，所以有时即便你在操作系统上FlushDNS，也无法刷新出新的服务器IP。Google这么干的一大原因是操作系统的DNS Cache策略太烂。</li>
+<li>针对第2点，Chrome会并行地为每个域名建立6个TCP连接，所以在3个多一点的单程时间里，浏览器就有了6个握好手的连接可用。</li>
+<li>针对第3、4、5、6点，Chrome也没什么办法，只能等着，不过一旦DOM载入，Chrome就会马上开始并行地请求CSS、JS、图片等资源，尽量利用前面的6个连接。Chrome支持Keep-Alive，能连续重用这些连接。</li>
+<li>第7点Chrome花了不少工夫优化，不论是V8 JS引擎，还是Blink渲染器，都在不断提速。</li>
+</ul>
+<p>Google正是为了优化第3、4、5、6环节，才提出了spdy协议，所以如果要比较的话，重点也自然应该放在这里。</p>
+<p>spdy只有一个TCP连接，慢启动也就开头几秒钟的事。之前http 6个TCP连接的方案，每个都要单独经历慢启动的过程，而且根据TCP协议的规定，这是个随传输的数据包越来越多而把发送窗口越搞越大的过程。spdy因为所有资源都重用这一个连接，所以很快就能完成这个过程。</p>
+<p>spdy协议在一个TCP上实现了多个流，这样多个请求就可以合并在少数数据包里发送，反正每个请求都有各自的流ID号，不会出问题。HTTP/1.1虽然定义了pipeline技术标准，可是因为浏览器很难实现，所以基本各个浏览器都不支持。每个连接都只能等上一个请求的响应数据回来了，才会发出下一个请求。</p>
+<p>不光请求数据可以合包发送，响应数据也可以。网页上有大量小资源（不到1KB的文件，很多js、css、小图标都是这种资源）的时候，合包发送的价值非常巨大。现在电脑一般TCP协商的MSS是1460，如果每个TCP包发送1460字节，和每个TCP包发送500字节相比，前者会快得多。spdy因为多个流并行请求，可以把不同资源文件的数据穿插发送，因此可以堆满每个TCP包，利用率大大提升。</p>
+<p>除了堆满每个TCP包，spdy还加入了完全压缩技术。http上的压缩是根据Content-Encoding头决定是否使用的，头还是全明文不压缩的，spdy上就直接规定没有不压缩的东西。这里要吐槽一下测试用例，你搞一堆JPEG图片作为正文传输，能压掉0.1%的大小就要烧香了，spdy的这项优化完全展现不能啊。哦，还有头压缩，拿静态资源服务器测试才不会出现要上传下载十几KB的http header的情况呢。怎么也得用XX市人民政府办公自动化系统的header来测试才能有所感知吧？不过算了，那些系统多半是IE6 Only的，注定与spdy无缘。不过这种系统的效率倒是体现了我们党和政府的工作效率。</p>
+<p>针对服务器处理环节，Google也想出了提速手段。当然Google的神们也不可能预知大千世界每个服务端程序员们都想干些什么。但是他们认为如果服务端程序比较善解人意——啊不，善解浏览器意——主动把HTML要用的各种次级资源推送下来，就免了浏览器的二次请求之苦，也能缩短不少整体处理时间。当然对于那些来过的，有Cache的浏览器们，在DOM还没发送的时候，就直接先把要用的次级资源名单在header里下发，倒也可以让Chrome这类浏览器更早一点过来请求资源。</p>
+<p>不过回到nghttp2和nginx的spdy实现，显然这帮家伙显然没有什么能力去做Server Push和Server Hint功能，所以实际我们能用上的spdy优势也就是多路复用和压缩。至于效果如何嘛，我做了两个例子来测试：一个是一堆小图标的——这个是为了突显spdy的优化点，在http上我们一般会用WebFont或者CSS Sprite来优化这个地方；另一个例子比较实际，是我直接抓取的南方周末的首页，本来想抓搜狐的，可是他们的站外资源太多了，懒得慢慢摘。</p>
+<p>第一个例子： http://rek.me/icons/<br />
+spdy版： https://rek.me/icons/</p>
+<p>第二个例子： http://rek.me/infzm/<br />
+spdy版： https://rek.me/infzm/</p>
+<p>第一个例子的页面加载耗时差异非常显著，在我这里http版本最快也需要12秒，而spdy版本基本都在4秒内完成加载。用Wireshark抓包也能看到，整个http版本用了6个TCP连接，和服务器交换了2600多个数据包才完成加载，大量的数据包长度只有四五百字节；spdy版本用了一个TCP连接，和服务器只交换了1000多一点的数据包，就完成了加载，服务器下发的数据包许多都装满了1460字节。</p>
+<p>第二个例子中spdy表现不是很稳定，我做了20次测试，大部分都在5秒内完成加载，但也有两次花了8秒多才完成，出现了异常值，下面是测试数据。</p>
+<table>
+<thead>
+<tr>
+<th>测试序号</th>
+<th>HTTP耗时(s)</th>
+<th>SPDY耗时(s)</th>
+<th>SPDY去除Outlier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>3.54</td>
+<td>2.57</td>
+<td>2.57</td>
+</tr>
+<tr>
+<td>2</td>
+<td>4.27</td>
+<td>2.50</td>
+<td>2.50</td>
+</tr>
+<tr>
+<td>3</td>
+<td>4.06</td>
+<td>3.53</td>
+<td>3.53</td>
+</tr>
+<tr>
+<td>4</td>
+<td>3.82</td>
+<td>6.11</td>
+<td>6.11</td>
+</tr>
+<tr>
+<td>5</td>
+<td>4.15</td>
+<td>1.96</td>
+<td>1.96</td>
+</tr>
+<tr>
+<td>6</td>
+<td>3.51</td>
+<td>8.43</td>
+<td>2.36</td>
+</tr>
+<tr>
+<td>7</td>
+<td>3.87</td>
+<td>2.36</td>
+<td>2.42</td>
+</tr>
+<tr>
+<td>8</td>
+<td>3.31</td>
+<td>2.42</td>
+<td>2.95</td>
+</tr>
+<tr>
+<td>9</td>
+<td>3.30</td>
+<td>2.95</td>
+<td>4.33</td>
+</tr>
+<tr>
+<td>10</td>
+<td>3.44</td>
+<td>4.33</td>
+<td>4.60</td>
+</tr>
+<tr>
+<td>11</td>
+<td>3.75</td>
+<td>4.60</td>
+<td>3.29</td>
+</tr>
+<tr>
+<td>12</td>
+<td>3.81</td>
+<td>3.29</td>
+<td>4.65</td>
+</tr>
+<tr>
+<td>13</td>
+<td>4.29</td>
+<td>4.65</td>
+<td>2.07</td>
+</tr>
+<tr>
+<td>14</td>
+<td>3.41</td>
+<td>2.07</td>
+<td>4.06</td>
+</tr>
+<tr>
+<td>15</td>
+<td>2.95</td>
+<td>4.06</td>
+<td>1.73</td>
+</tr>
+<tr>
+<td>16</td>
+<td>3.07</td>
+<td>8.10</td>
+<td>2.80</td>
+</tr>
+<tr>
+<td>17</td>
+<td>3.93</td>
+<td>1.73</td>
+<td>1.57</td>
+</tr>
+<tr>
+<td>18</td>
+<td>3.79</td>
+<td>2.80</td>
+<td>1.85</td>
+</tr>
+<tr>
+<td>19</td>
+<td>3.67</td>
+<td>1.57</td>
+<td></td>
+</tr>
+<tr>
+<td>20</td>
+<td>3.51</td>
+<td>1.85</td>
+<td></td>
+</tr>
+<tr>
+<td>平均</td>
+<td>3.67</td>
+<td>3.59</td>
+<td>3.08</td>
+</tr>
+<tr>
+<td>标准差</td>
+<td>0.37</td>
+<td>1.98</td>
+<td>1.24</td>
+</tr>
+</tbody>
+</table>
+<p>我用Wireshark抓包发现，服务器443端口下发的数据丢包比较严重，也许是我反复使用加密连接的行为让功夫网采取了干预行动。我把两个例子的文件放在附件里，可以在墙内的服务器上搭上试试。</p>
+<p><strong>另外, 我在第一次测试时用的图片太大发现SPDY的load时间和HTTP相差无几, 后来经 桄欣 指导才发现 测试用例中的图片太大了，spdy优化节省下来的时间占总时间比例极小，所以无法察觉。毕竟spdy协议无法改善你的上网带宽，找ISP升级网速才是这种情况的解决之道。</strong></p>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="http://blog.doubis.com/tag/http.html">http</a>
+      <a href="http://blog.doubis.com/tag/spdy.html">spdy</a>
+    </p>
+  </div>
+</article>
+
+    <footer>
+        <p>&copy; Kris Lee 2016</p>
+<p>Built using <a href="http://getpelican.com" target="_blank">Pelican</a> - <a href="https://github.com/alexandrevicenzi/flex" target="_blank">Flex</a> theme by <a href="http://alexandrevicenzi.com" target="_blank">Alexandre Vicenzi</a></p>    </footer>
+  </main>
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BlogPosting",
+  "name": "HTTP1.1 与 SPDY 协议对比",
+  "headline": "HTTP1.1 与 SPDY 协议对比",
+  "datePublished": "2015-08-22 20:43:00+08:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "桄欣",
+    "url": "http://blog.doubis.com/author/guang-xin.html"
+  },
+  "image": "http://blog.doubis.com/images/head.jpg",
+  "url": "http://blog.doubis.com/http-2-spdy.html",
+  "description": "SPDY协议的介绍参考google或者极客公园, 本文着重讲下spdy协议在哪些地方相对于http1.1做了耗时优化. 首先解释下一个页面加载进来有那些地方需要耗时: DNS查询时间（几毫秒到几十秒不等） TCP握手时间（取决于你和服务器的ping值，三次握手需要3倍单程时间，除非你把服务器架在内网，一般几十毫秒到几秒不等） 慢启动窗口时间（这是一个累积过程，刚建立的TCP连接不会以最大速度发送数据，数据传输速度会有一个线性增长的过程） 请求传输时间（一般的请求都在几百字节到几KB，也就一两个TCP就能发出去） 服务器处理时间 ..."
+}
+</script></body>
+</html>
