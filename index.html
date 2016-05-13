@@ -188,7 +188,7 @@
 
 
 
-
+<button onclick="wechatWifi">demo wifi</button>
 <script type="application/ld+json">
 {
   "@context" : "http://schema.org",
@@ -198,5 +198,23 @@
   "image": "http://blog.doubis.com/images/head.jpg",
   "description": ""
 }
-</script></body>
+</script>
+<script src="//cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+<script src="http://www.veryhuo.com/uploads/Common/js/jQuery.md5.js"></script>
+<script type="text/javascript" src="https://wifi.weixin.qq.com/resources/js/wechatticket/wechatutil.js" ></script>
+<script>
+function wechatWifi() {
+  var appId = "wx25dd50784edd9977",
+      extend = "test",     
+      timestamp = new Date().getTime().toString(),
+      sign = "",
+      shop_id = "7447546",
+      authUrl = "http://baidu.com",
+      mac = "00:00:00:00:00:00",
+      ssid = "Airport_Free_WiFi_BJ";
+  var sign = $.md5(appId + extend + timestamp + shop_id + authUrl + mac + ssid + "db78b5c96fbb6f39edcd7a2382d64190");
+  Wechat_GotoRedirect(appId, extend, timestamp, sign, shop_id, authUrl, mac, ssid );
+}
+</script>
+</body>
 </html>
