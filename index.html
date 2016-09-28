@@ -210,9 +210,9 @@ function wechatWifi() {
       timestamp = new Date().getTime().toString(),
       sign = "",
       shop_id = "2930357",
-      authUrl = "http://baidu.com",
+      authUrl = "http://192.168.15.107:5000/index",
       mac = "00:00:00:00:00:00",
-      ssid = "WANDA";
+      ssid = "kindle";
   var sign = $.md5(appId + extend + timestamp + shop_id + authUrl + mac + ssid + "a97a92ea704d99e73e3176f08a51d340");
   Wechat_GotoRedirect(appId, extend, timestamp, sign, shop_id, authUrl, mac, ssid );
 }
